@@ -10,13 +10,12 @@ use Clipboard;
 my $continue = "";
 
 do{
-    # Call cls on windows systems, clear on unix. $^0 stores the OS name
-
+    # Call cls on windows systems, clear on unix.
     system $^O eq 'MSWin32' ? 'cls' : 'clear';
     open my $fh, "<" , "template.txt" or die "Cannot read the file!";
 
     my $total_score = 0;
-    my $received_score = 0;
+    my $received_total = 0;
 
     my $out = "";
 
@@ -27,28 +26,36 @@ do{
         # Matches [x/x]
         elsif (/.*\[([-0-9.]*\/)([0-9.]*)\].*/)
         {
+            # Matches [x
             my $default = $1;
+            # Matches the total score in the current line
             my $total_line = $2;
+            # Keep track of the maximum possible score
             $total_score += $total_line;
             print ">";
-            my $score = <STDIN>;
-            chomp $score;
-            # If the score input is non numeric make it equal to the default
-            $score = $total_line if $score =~ /[^0-9.-]+/ || $score eq "";
-            $score = $total_line + $score if $score < 0;
-            $received_score += $score;
-            print "Notes>";
-            my $notes = <STDIN>;
+            my $input = <STDIN>;
+            chomp $input;
+
+            # Gets every number inside square brackets
+            my $pattern = qr/\[([-0-9]+)\]/;
+
+            for ($input =~ /$pattern/g){
+                $total_line += $_ if $_ < 0;
+            }
+            $received_total += $total_line;
             # Replace [X/ with the new score
-            $_ =~ s/$default/$score\//;
+            $_ =~ s/$default/$total_line\//;
+            # Append the current line from the template
             $out  .= $_;
-            $out .= $notes;
+            $out .= $input;
+            say $input;
+            say $out;
         }
         else{
             $out .= $_;
         }
     }
-    $out .= "\n\nTotal: [$received_score/$total_score]";
+    $out .= "\n\nTotal: [$received_total/$total_score]";
     Clipboard->copy($out);
 
     open my $fout, ">", "out.txt" or die "Cannot write to file";
