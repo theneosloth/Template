@@ -12,9 +12,12 @@ my $continue = "";
 do{
     # Call cls on windows systems, clear on unix.
     system $^O eq 'MSWin32' ? 'cls' : 'clear';
-    open my $fh, "<" , "template.txt" or die "Cannot read the file!";
+    # Open the file. Use either the file name passed or "template.txt"
+    my $file = shift @ARGV || "template.txt";
+    open my $fh, "<" , $file or die "Cannot read the file!";
 
-    my $total_score = 0;
+    # Keeps track of the grade received
+    my $total_grade = 0;
     my $received_total = 0;
 
     my $out = "";
@@ -28,10 +31,10 @@ do{
         {
             # Matches [x
             my $default = $1;
-            # Matches the total score in the current line
+            # Matches the total grade in the current line
             my $total_line = $2;
-            # Keep track of the maximum possible score
-            $total_score += $total_line;
+            # Keep track of the maximum possible grade
+            $total_grade += $total_line;
             print ">";
             my $input = <STDIN>;
             chomp $input;
@@ -43,19 +46,17 @@ do{
                 $total_line += $_ if $_ < 0;
             }
             $received_total += $total_line;
-            # Replace [X/ with the new score
+            # Replace [X/ with the new grade
             $_ =~ s/$default/$total_line\//;
             # Append the current line from the template
             $out  .= $_;
             $out .= $input;
-            say $input;
-            say $out;
         }
         else{
             $out .= $_;
         }
     }
-    $out .= "\n\nTotal: [$received_total/$total_score]";
+    $out .= "\n\nTotal: [$received_total/$total_grade]";
     Clipboard->copy($out);
 
     open my $fout, ">", "out.txt" or die "Cannot write to file";
