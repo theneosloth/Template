@@ -1,0 +1,4 @@
+//This is a comment line that will not be appended to the output
+This is a normal line that will get appended to the output
+This has a [5/5] grade. The user will be prompted for the grade here. Lets assume they enter -1
+This is another graded item [2/2]
