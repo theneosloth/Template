@@ -8,7 +8,6 @@ use Modern::Perl;
 use Clipboard;
 
 my $continue = "";
-my $out = "";
 
 my $file = shift @ARGV || "template.txt";
 my $fout = shift @ARGV || "out.txt";
@@ -25,6 +24,7 @@ do{
     my $total_grade = 0;
     my $received_total = 0;
 
+    my $out = "";
     # Sub loop that iterates over each line
     while (<$fh>){
         #Print out the line to the console
