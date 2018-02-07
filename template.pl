@@ -9,20 +9,23 @@ use Clipboard;
 
 my $continue = "";
 
+my $file = shift @ARGV || "template.txt";
+my $out = shift @ARGV || "out.txt";
+
+# Main loop, iterates over the entire file. Terminates after a yes no prompt
 do{
     # Call cls on windows systems, clear on unix.
     system $^O eq 'MSWin32' ? 'cls' : 'clear';
     # Open the file. Use either the file name passed or "template.txt"
-    my $file = shift @ARGV || "template.txt";
     open my $fh, "<" , $file or die "Cannot read the file!";
 
     # Keeps track of the grade received
     my $total_grade = 0;
     my $received_total = 0;
 
-    my $out = "";
-
+    # Sub loop that iterates over each line
     while (<$fh>){
+        #Print out the line to the console
         say;
         #Do nothing with commented lines
         if (/^\/\/.*/){}
@@ -39,7 +42,7 @@ do{
             my $input = <STDIN>;
             chomp $input;
 
-            # Gets every number inside square brackets
+            # Gets every negative number inside square brackets
             my $pattern = qr/\[([-0-9]+)\]/;
 
             for ($input =~ /$pattern/g){
@@ -50,7 +53,8 @@ do{
             $_ =~ s/$default/$total_line\//;
             # Append the current line from the template
             $out  .= $_;
-            $out .= $input;
+            # Append the user input
+            $out .= $input . "\n";
         }
         else{
             $out .= $_;
@@ -66,4 +70,5 @@ do{
     print "\nContinue?>";
     $continue = <STDIN>;
     chomp $continue;
-} while($continue ne "n");
+
+} while($continue =~ /^[^n]*/i);
