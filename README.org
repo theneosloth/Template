@@ -1,3 +1,5 @@
+* Requirements
+Modern::Perl and Clipboard modules
 * Template
 Stub
 
