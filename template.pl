@@ -8,9 +8,11 @@ use Modern::Perl;
 use Clipboard;
 
 my $continue = "";
+my $out = "";
 
 my $file = shift @ARGV || "template.txt";
-my $out = shift @ARGV || "out.txt";
+my $fout = shift @ARGV || "out.txt";
+
 
 # Main loop, iterates over the entire file. Terminates after a yes no prompt
 do{
